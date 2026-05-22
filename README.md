@@ -74,7 +74,7 @@ RNF05 – O sistema deverá ser responsivo e acessível para diferentes perfis d
 RNF06 – O sistema deverá garantir armazenamento seguro dos dados
 RNF07 – O sistema deve suportar pelo menos 1000 registros de atendimentos sem perda significativa de desempenho
 
-7. Modelagem do Sistema
+📄7. Modelagem do Sistema
    
 Entidades do Banco de Dados
 
@@ -106,7 +106,7 @@ descrição
 pet (FK)
 profissional (FK)
 
-9. Relações (UML)
+📄8. Relações (UML)
 
 Tutor 1 → N Pet
 Pet 1 → N Atendimento
