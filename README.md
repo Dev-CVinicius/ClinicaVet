@@ -66,9 +66,63 @@ sistema intuitivo
 acessibilidade básica
 validação de dados
 
+RNF01 – O sistema deverá ser desenvolvido em Java
+RNF02 – O banco de dados utilizado será MySQL
+RNF03 – O sistema deverá possuir interface simples e intuitiva
+RNF04 – O sistema deverá funcionar em computadores com Windows
+RNF05 – O sistema deverá ser responsivo e acessível para diferentes perfis de usuário, incluindo idosos
+RNF06 – O sistema deverá garantir armazenamento seguro dos dados
+RNF07 – O sistema deve suportar pelo menos 1000 registros de atendimentos sem perda significativa de desempenho
+
+7. Modelagem do Sistema
+   
+Entidades do Banco de Dados
+
+(Tutor)
+
+id
+nome
+telefone
+endereço
+
+(Pet)
+
+id
+nome
+espécie
+idade
+tutor (FK)
+
+(Profissional)
+id
+nome
+especialidade
+
+(Atendimento)
+
+id
+data
+descrição
+pet (FK)
+profissional (FK)
+
+9. Relações (UML)
+
+Tutor 1 → N Pet
+Pet 1 → N Atendimento
+Profissional 1 → N Atendimento
+11. Funcionalidades / Telas do Sistema
+Tela de cadastro de tutor
+Tela de cadastro de pet
+Tela de cadastro de profissional
+Tela de registro de atendimento
+Tela de consulta / histórico de atendimentos
+
+
 🧱 UML DEFINIDO
 
 Classes:
+
 Tutor
 Pet
 Veterinario
@@ -80,3 +134,4 @@ Tutor 1 → muitos Pets
 Pet 1 → muitas Consultas
 Veterinario 1 → muitas Consultas
 Consulta → Receita (1:1 ou 1:0..1)
+
