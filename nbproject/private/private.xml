@@ -3,11 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Vinni/Documents/GitHub/GitHub%20Desktop%20Exemplo/ClinicaVeterinaria/src/Pet.java</file>
-            <file>file:/C:/Users/Vinni/Documents/GitHub/GitHub%20Desktop%20Exemplo/ClinicaVeterinaria/src/Main.java</file>
-            <file>file:/C:/Users/Vinni/Documents/GitHub/GitHub%20Desktop%20Exemplo/ClinicaVeterinaria/src/Tutor.java</file>
-            <file>file:/C:/Users/Vinni/Documents/GitHub/GitHub%20Desktop%20Exemplo/ClinicaVeterinaria/src/Profissional.java</file>
-            <file>file:/C:/Users/Vinni/Documents/GitHub/GitHub%20Desktop%20Exemplo/ClinicaVeterinaria/src/Atendimento.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/ResumoConsulta.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/Receita.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/Consulta.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/Menu.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/Tutor.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/Pet.java</file>
+            <file>file:/C:/Users/Vinni/Documents/NetBeansProjects/ClinicaVeterinaria/src/Telas/Historico.java</file>
         </group>
     </open-files>
 </project-private>
