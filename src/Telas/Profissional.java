@@ -46,7 +46,7 @@ public class Profissional extends javax.swing.JFrame {
         jLabel2.setText("Cadastro de Profissional");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel3.setText("Nome do Profissional: ");
+        jLabel3.setText("Nome: ");
 
         jTextField1.setText("jTextField1");
 
