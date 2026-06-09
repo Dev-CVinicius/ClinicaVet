@@ -4,6 +4,12 @@
  */
 package Telas;
 
+import javax.swing.JOptionPane;
+import ConexaoDAO.Conexao;
+import java.awt.HeadlessException;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import java.sql.*;
 /**
  *
  * @author Vinni
@@ -30,13 +36,13 @@ public class Profissional extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNome = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtTelefone = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtIdProfissional = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtEspecialidade = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
@@ -48,24 +54,21 @@ public class Profissional extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Nome: ");
 
-        jTextField1.setText("jTextField1");
-
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Telefone: ");
-
-        jTextField2.setText("jTextField2");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("ID Profissional: ");
 
-        jTextField3.setText("jTextField3");
-
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel6.setText("Especialidade:");
 
-        jTextField4.setText("jTextField4");
-
         jButton1.setText("Salvar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Voltar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -90,10 +93,10 @@ public class Profissional extends javax.swing.JFrame {
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
-                            .addComponent(jTextField4)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtIdProfissional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                            .addComponent(txtEspecialidade)
+                            .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(207, 207, 207)
@@ -107,20 +110,20 @@ public class Profissional extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(67, 67, 67)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(42, 42, 42)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtEspecialidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(32, 32, 32)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIdProfissional, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -162,6 +165,114 @@ public class Profissional extends javax.swing.JFrame {
         dispose();
         
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        try {
+
+    String nome =
+            txtNome.getText().trim();
+
+    String telefone =
+            txtTelefone.getText().trim();
+
+    String especialidade =
+            txtEspecialidade.getText().trim();
+
+    // Campos obrigatórios
+    if (nome.isEmpty()
+            || telefone.isEmpty()
+            || especialidade.isEmpty()) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Preencha todos os campos!"
+        );
+
+        return;
+    }
+
+    // Apenas letras para nome
+    if (!nome.matches("[A-Za-zÀ-ÿ ]+")) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Nome inválido!"
+        );
+
+        return;
+    }
+
+    // Primeira letra maiúscula
+    nome =
+            nome.substring(0,1).toUpperCase()
+            + nome.substring(1);
+
+    // Telefone
+    if (!telefone.matches("\\(\\d{2}\\)\\s\\d{4,5}-\\d{4}")) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Telefone inválido!\nExemplo: (21) 99999-9999"
+        );
+
+        return;
+    }
+
+            try (Connection conn = Conexao.conectar()) {
+                String sql =
+                        "INSERT INTO profissional "
+                        + "(nome, especialidade, telefone) "
+                        + "VALUES (?, ?, ?)";
+                
+                PreparedStatement stmt =
+                        conn.prepareStatement(
+                                sql,
+                                Statement.RETURN_GENERATED_KEYS
+                        );
+                
+                stmt.setString(1, nome);
+                
+                stmt.setString(2, especialidade);
+                
+                stmt.setString(3, telefone);
+                
+                stmt.executeUpdate();
+                
+                ResultSet rs =
+                        stmt.getGeneratedKeys();
+                
+                if (rs.next()) {
+                    
+                    int idGerado =
+                            rs.getInt(1);
+                    
+                    txtIdProfissional.setText(
+                            String.valueOf(idGerado)
+                    );
+                    
+                    JOptionPane.showMessageDialog(
+                            this,
+                            """
+                                            Profissional cadastrado com sucesso!
+                                            ID: """ + idGerado
+                    );
+                }
+                
+                rs.close();
+                stmt.close();
+            }
+
+} catch (SQLException e) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Erro ao cadastrar profissional:\n"
+            + e.getMessage()
+    );
+
+}   
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -208,9 +319,9 @@ public class Profissional extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField txtEspecialidade;
+    private javax.swing.JTextField txtIdProfissional;
+    private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtTelefone;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,8 +4,13 @@
  */
 package Telas;
 
-import javax.swing.JOptionPane;
 
+import javax.swing.JOptionPane;
+import ConexaoDAO.Conexao;
+import java.awt.HeadlessException;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import java.sql.*;
 /**
  *
  * @author Vinni
@@ -17,25 +22,31 @@ public class Tutor extends javax.swing.JFrame {
      */
     public Tutor() {
     initComponents();
-        
-    txtNomePet.setEditable(false);
-}
     
-   public void receberDadosPet() {
+      txtIdPet.setEditable(false);
+      txtNomePet.setEditable(false);
+      txtCPF.setEditable(false);
+    }
+    
+    public void receberDadosPet() {
 
     txtIdPet.setText(
-            String.valueOf(Model.DadosTemporarios.idPet)
+            String.valueOf(
+                    Model.DadosCompartilhados.idPet
+            )
+    );
+
+    txtNomePet.setText(
+            Model.DadosCompartilhados.txtNomePet
     );
 
     txtCPF.setText(
-            Model.DadosTemporarios.cpfTutor
+            Model.DadosCompartilhados.cpfTutor
     );
-    
     txtNomePet.setText(
-            Model.DadosTemporarios.txtNomePet
+            Model.DadosCompartilhados.txtNomePet
     );
 }
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -202,38 +213,116 @@ public class Tutor extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdPetActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if(txtNomeTutor.getText().isEmpty()){
+
+
+    try {
+
+        // Campo obrigatório
+        if (txtNomeTutor.getText().trim().isEmpty()
+                || txtCelular.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Todos os campos são obrigatórios!"
+            );
+            return;
+        }
+
+        String nomeTutor = txtNomeTutor.getText().trim();
+        String celular = txtCelular.getText().trim();
+
+        // Apenas letras e espaços
+        if (!nomeTutor.matches("[A-Za-zÀ-ÿ ]+")) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Nome do tutor deve conter apenas letras."
+            );
+            return;
+        }
+
+        // Primeira letra maiúscula
+        if (!Character.isUpperCase(nomeTutor.charAt(0))) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "A primeira letra do nome deve ser maiúscula."
+            );
+            return;
+        }
+
+        // Formato celular: (21) 99999-9999
+        if (!celular.matches("\\(\\d{2}\\)\\s\\d{4,5}-\\d{4}")) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Celular inválido.\nUse o formato: (21) 99999-9999"
+            );
+            return;
+        }
+
+        Connection conn = Conexao.conectar();
+
+        String sql =
+                "INSERT INTO tutor "
+                + "(cpf, nome_tutor, celular, id_pet) "
+                + "VALUES (?, ?, ?, ?)";
+
+        PreparedStatement stmt =
+                conn.prepareStatement(sql);
+
+        stmt.setString(
+                1,
+                txtCPF.getText()
+        );
+
+        stmt.setString(
+                2,
+                nomeTutor
+        );
+
+        stmt.setString(
+                3,
+                celular
+        );
+
+        stmt.setInt(
+                4,
+                Integer.parseInt(txtIdPet.getText())
+        );
+
+        stmt.executeUpdate();
+
         JOptionPane.showMessageDialog(
                 this,
-                "Digite o nome do tutor!"
+                "Tutor cadastrado com sucesso!"
         );
-        return;
-    }
 
-    if(txtCelular.getText().isEmpty()){
+        stmt.close();
+        conn.close();
+
+        Menu menu = new Menu();
+        menu.setVisible(true);
+
+        dispose();
+
+    } catch (SQLException e) {
+
         JOptionPane.showMessageDialog(
                 this,
-                "Digite o celular!"
+                "Erro ao salvar tutor:\n" + e.getMessage()
         );
-        return;
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Erro inesperado:\n" + e.getMessage()
+        );
+
     }
 
-    Model.DadosTemporarios.txtNomeTutor =
-            txtNomeTutor.getText();
-
-    Model.DadosTemporarios.txtCelular =
-            txtCelular.getText();
-
-    JOptionPane.showMessageDialog(
-            this,
-            "Tutor cadastrado com sucesso!"
-    );
-
-    Menu menu = new Menu();
-    menu.setVisible(true);
-
-    dispose();
-
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

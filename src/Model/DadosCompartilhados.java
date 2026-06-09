@@ -8,12 +8,16 @@ package Model;
  *
  * @author Vinni
  */
-public class DadosTemporarios {
+public class DadosCompartilhados {
     
-    public static int proximoIdPet = 1;
-    public static String txtNomePet;
-    public static String cpfTutor;
     public static int idPet;
+
+    public static String txtNomePet;
+
+    public static String cpfTutor;
+
     public static String txtNomeTutor;
+
     public static String txtCelular;
+    
 }

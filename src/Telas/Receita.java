@@ -4,6 +4,14 @@
  */
 package Telas;
 
+
+import ConexaoDAO.Conexao;
+import java.awt.HeadlessException;
+import java.sql.PreparedStatement;
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Vinni
@@ -15,8 +23,21 @@ public class Receita extends javax.swing.JFrame {
      */
     public Receita() {
         initComponents();
+        txtIdConsulta.setEditable(false);
     }
 
+
+public Receita(int idConsulta) {
+    initComponents();
+
+    txtIdConsulta.setText(
+            String.valueOf(idConsulta)
+    );
+
+    txtIdConsulta.setEditable(false);
+}
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,12 +49,12 @@ public class Receita extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtIdConsulta = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        txtReceita = new javax.swing.JTextArea();
+        btnFinalizar = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -43,21 +64,24 @@ public class Receita extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("ID Consulta:");
 
-        jTextField1.setText("jTextField1");
-
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Receita:");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        txtReceita.setColumns(20);
+        txtReceita.setRows(5);
+        jScrollPane1.setViewportView(txtReceita);
 
-        jButton1.setText("Finalizar Consulta");
-
-        jButton2.setText("Voltar");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnFinalizar.setText("Finalizar Consulta");
+        btnFinalizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnFinalizarActionPerformed(evt);
+            }
+        });
+
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
             }
         });
 
@@ -77,12 +101,12 @@ public class Receita extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtIdConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel3)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnFinalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(25, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -93,28 +117,115 @@ public class Receita extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIdConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btnFinalizar)
+                    .addComponent(btnVoltar))
                 .addGap(20, 20, 20))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
        
         ResumoConsulta tela = new ResumoConsulta();
         tela.setVisible(true);
         dispose();
         
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
+    
+       try {
+
+    if (txtIdConsulta.getText().trim().isEmpty()
+            || txtReceita.getText().trim().isEmpty()) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Preencha todos os campos."
+        );
+
+        return;
+    }
+
+    Connection conn = Conexao.conectar();
+
+    conn.setAutoCommit(false);
+
+    try {
+
+        // Salva receita
+        String sqlReceita =
+                "INSERT INTO receita "
+                + "(id_consulta, descricao) "
+                + "VALUES (?, ?)";
+
+        PreparedStatement stmtReceita =
+                conn.prepareStatement(sqlReceita);
+
+        stmtReceita.setInt(
+                1,
+                Integer.parseInt(txtIdConsulta.getText())
+        );
+
+        stmtReceita.setString(
+                2,
+                txtReceita.getText()
+        );
+
+        stmtReceita.executeUpdate();
+
+        // Finaliza consulta
+        String sqlConsulta =
+                "UPDATE consulta "
+                + "SET status = 'FINALIZADA' "
+                + "WHERE id_consulta = ?";
+
+        PreparedStatement stmtConsulta =
+                conn.prepareStatement(sqlConsulta);
+
+        stmtConsulta.setInt(
+                1,
+                Integer.parseInt(txtIdConsulta.getText())
+        );
+
+        stmtConsulta.executeUpdate();
+
+        conn.commit();
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Consulta finalizada com sucesso!"
+        );
+
+        txtIdConsulta.setText("");
+        txtReceita.setText("");
+
+    } catch (HeadlessException | NumberFormatException | SQLException e) {
+
+        conn.rollback();
+
+        throw e;
+    }
+
+    conn.close();
+
+} catch (Exception e) {
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Erro: " + e.getMessage()
+    );
+} 
+        
+    }//GEN-LAST:event_btnFinalizarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -145,6 +256,7 @@ public class Receita extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Receita().setVisible(true);
             }
@@ -152,13 +264,13 @@ public class Receita extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnFinalizar;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField txtIdConsulta;
+    private javax.swing.JTextArea txtReceita;
     // End of variables declaration//GEN-END:variables
 }

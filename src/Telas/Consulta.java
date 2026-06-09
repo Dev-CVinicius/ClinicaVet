@@ -4,6 +4,13 @@
  */
 package Telas;
 
+import javax.swing.JOptionPane;
+import ConexaoDAO.Conexao;
+import java.awt.HeadlessException;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import java.sql.*;
+
 /**
  *
  * @author Vinni
@@ -15,8 +22,108 @@ public class Consulta extends javax.swing.JFrame {
      */
     public Consulta() {
         initComponents();
-    }
+        
+            txtIdConsulta.setEditable(false);
+            txtIdPet.setEditable(false);
+            txtIdProf.setEditable(false);
+}
+  private void buscarPetPorCpf() {
 
+    try {
+
+        try (Connection conn = Conexao.conectar()) {
+            String sql =
+                    "SELECT id_pet "
+                    + "FROM pet "
+                    + "WHERE cpf_tutor = ?";
+            
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(
+                        1,
+                        txtCpfTutor.getText()
+                );
+                
+                ResultSet rs =
+                        stmt.executeQuery();
+                
+                if (rs.next()) {
+                    
+                    txtIdPet.setText(
+                            String.valueOf(
+                                    rs.getInt("id_pet")
+                            )
+                    );
+                    
+                } else {
+                    
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "CPF não encontrado."
+                    );
+                }
+                
+                rs.close();
+            }
+        }
+
+    } catch (HeadlessException | SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage()
+        );
+    }
+}  
+
+  private void buscarProfissional() {
+
+    try {
+
+        try (Connection conn = Conexao.conectar()) {
+            String sql =
+                    "SELECT id_profissional "
+                    + "FROM profissional "
+                    + "WHERE especialidade = ?";
+            
+            PreparedStatement stmt =
+                    conn.prepareStatement(sql);
+            
+            stmt.setString(
+                    1,
+                    txtIdFunção.getText()
+            );
+            
+            ResultSet rs =
+                    stmt.executeQuery();
+            
+            if (rs.next()) {
+                
+                txtIdProf.setText(
+                        String.valueOf(
+                                rs.getInt("id_profissional")
+                        )
+                );
+                
+            } else {
+                
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Nenhum profissional encontrado."
+                );
+            }
+            
+            rs.close();
+            stmt.close();
+        }
+
+    } catch (HeadlessException | SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                e.getMessage()
+        );
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,22 +136,22 @@ public class Consulta extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtIdConsulta = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtData = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtIdFunção = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtCpfTutor = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtIdPet = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtIdProf = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -55,29 +162,23 @@ public class Consulta extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("ID Consulta: ");
 
-        jTextField1.setText("jTextField1");
-
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Data:");
-
-        jTextField2.setText("jTextField2");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Função:");
 
-        jTextField3.setText("jTextField3");
-
         jLabel6.setText("CPF Tutor:");
 
-        jTextField4.setText("jTextField4");
+        txtCpfTutor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCpfTutorActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("ID Pet:");
 
-        jTextField5.setText("jTextField5");
-
         jLabel8.setText("ID Prof.");
-
-        jTextField6.setText("jTextField6");
 
         jLabel9.setText("Descrição Atendimento:");
 
@@ -85,7 +186,12 @@ public class Consulta extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jButton1.setText("Salvar");
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Voltar");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -107,7 +213,7 @@ public class Consulta extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,10 +223,10 @@ public class Consulta extends javax.swing.JFrame {
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel2))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtIdConsulta, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                                    .addComponent(txtData, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtIdPet, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -138,9 +244,9 @@ public class Consulta extends javax.swing.JFrame {
                                                 .addGap(9, 9, 9)))
                                         .addGap(25, 25, 25)))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(txtCpfTutor, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtIdFunção, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtIdProf, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(70, 70, 70))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -151,29 +257,29 @@ public class Consulta extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdConsulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIdFunção, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCpfTutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdPet, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIdProf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
@@ -206,6 +312,156 @@ public class Consulta extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+       
+           buscarPetPorCpf();
+           buscarProfissional();
+        
+    try {
+
+        // Campos obrigatórios
+        if      (txtData.getText().trim().isEmpty()
+                || txtCpfTutor.getText().trim().isEmpty()
+                || jTextArea1.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Preencha todos os campos obrigatórios!"
+            );
+            return;
+        }
+
+        // Validação da data
+        if (!txtData.getText().matches("\\d{2}/\\d{2}/\\d{4}")) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Data inválida!\nUse o formato dd/MM/aaaa"
+            );
+            return;
+        }
+
+        // Verifica se encontrou o pet
+        if (txtIdPet.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pet não localizado pelo CPF informado."
+            );
+            return;
+        }
+
+        // Verifica se encontrou profissional
+        if (txtIdProf.getText().trim().isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Profissional não localizado."
+            );
+            return;
+        }
+
+        try (Connection conn = Conexao.conectar()) {
+            String sql =
+                    "INSERT INTO consulta "
+                    + "(data_consulta, id_pet, id_profissional, descricao, status) "
+                    + "VALUES (?, ?, ?, ?,?)";
+            
+            try (PreparedStatement stmt = conn.prepareStatement(
+                    sql,
+                    Statement.RETURN_GENERATED_KEYS
+            )) {
+                stmt.setString(
+                        1,
+                        txtData.getText()
+                );
+                
+                stmt.setInt(
+                        2,
+                        Integer.parseInt(
+                                txtIdPet.getText()
+                        )
+                );
+                
+                stmt.setInt(
+                        3,
+                        Integer.parseInt(
+                                txtIdProf.getText()
+                        )
+                );
+                
+                stmt.setString(
+                        4,
+                        jTextArea1.getText()
+                );
+                stmt.setString(
+                        5,
+                       "ABERTO"
+               );
+                
+                stmt.executeUpdate();
+                
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        
+                        int idConsulta =
+                                rs.getInt(1);
+                        
+                        txtIdConsulta.setText(
+                                String.valueOf(idConsulta)
+                        );
+                        
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Consulta cadastrada com sucesso!\nID: "
+                                        + idConsulta
+                        );
+                    }
+                }
+            }
+        }
+
+        // Limpar campos
+        txtData.setText("");
+        txtCpfTutor.setText("");
+        txtIdPet.setText("");
+        txtIdFunção.setText("");
+        txtIdProf.setText("");
+        jTextArea1.setText("");
+
+        txtData.requestFocus();
+
+    } catch (SQLException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Erro ao salvar consulta:\n"
+                + e.getMessage()
+        );
+
+    } catch (NumberFormatException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Erro nos dados numéricos."
+        );
+
+    } catch (HeadlessException e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Erro inesperado:\n"
+                + e.getMessage()
+        );
+    }
+  
+        
+    }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void txtCpfTutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCpfTutorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCpfTutorActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -235,6 +491,7 @@ public class Consulta extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Consulta().setVisible(true);
             }
@@ -242,7 +499,7 @@ public class Consulta extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnSalvar;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -256,11 +513,11 @@ public class Consulta extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField txtCpfTutor;
+    private javax.swing.JTextField txtData;
+    private javax.swing.JTextField txtIdConsulta;
+    private javax.swing.JTextField txtIdFunção;
+    private javax.swing.JTextField txtIdPet;
+    private javax.swing.JTextField txtIdProf;
     // End of variables declaration//GEN-END:variables
 }

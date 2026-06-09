@@ -4,7 +4,14 @@
  */
 package Telas;
 
+import ConexaoDAO.Conexao;
+import java.awt.HeadlessException;
 import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
+import java.sql.*;
+
+
+
 
 /**
  *
@@ -12,17 +19,13 @@ import javax.swing.JOptionPane;
  */
 public class Pet extends javax.swing.JFrame {
  
-     public static int proximoIdPet = 1; 
+     
 
     public Pet() {
    
         initComponents();
-        
-          txtIdPet.setEditable(false);
-
-    txtIdPet.setText(
-        String.valueOf(Model.DadosTemporarios.proximoIdPet)
-    );
+         txtIdPet.setEditable(false);
+         txtIdPet.setEnabled(false);
 }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -46,7 +49,7 @@ public class Pet extends javax.swing.JFrame {
         txtIdPet = new javax.swing.JTextField();
         txtCPF = new javax.swing.JTextField();
         txtPeso = new javax.swing.JTextField();
-        txtRaça = new javax.swing.JTextField();
+        txtRaca = new javax.swing.JTextField();
         txtIdade = new javax.swing.JTextField();
         btnSalvar = new javax.swing.JButton();
         btnVoltar = new javax.swing.JButton();
@@ -116,7 +119,7 @@ public class Pet extends javax.swing.JFrame {
                                     .addComponent(jLabel7))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtRaça, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                                    .addComponent(txtRaca, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
                                     .addComponent(txtCPF)
                                     .addComponent(txtNomePet)
                                     .addComponent(txtIdPet)
@@ -153,7 +156,7 @@ public class Pet extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(txtRaça, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtRaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
@@ -186,7 +189,7 @@ public class Pet extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
-               Menu menu = new Menu();
+         Menu menu = new Menu();
          menu.setVisible(true);
          dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
@@ -196,40 +199,102 @@ public class Pet extends javax.swing.JFrame {
     }//GEN-LAST:event_txtIdPetActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        
+   
+       
+try {
 
-    if(txtNomePet.getText().isEmpty()){
-        JOptionPane.showMessageDialog(
-                this,
-                "Digite o nome do Pet!"
-        );
+    // Validação de campos vazios
+    if (txtNomePet.getText().trim().isEmpty()
+            || txtCPF.getText().trim().isEmpty()
+            || txtPeso.getText().trim().isEmpty()
+            || txtRaca.getText().trim().isEmpty()
+            || txtIdade.getText().trim().isEmpty()) {
+
+        JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!");
         return;
     }
 
-    int idGerado = Model.DadosTemporarios.proximoIdPet++;
+    try (Connection conn = Conexao.conectar()) {
 
-    Model.DadosTemporarios.idPet = idGerado;
+        // 🔎 1. VERIFICAR CPF ANTES DE INSERIR
+        String sqlCheck = "SELECT 1 FROM pet WHERE cpf_tutor = ?";
+        try (PreparedStatement stmtCheck = conn.prepareStatement(sqlCheck)) {
 
-    Model.DadosTemporarios.txtNomePet =
-            txtNomePet.getText();
+            stmtCheck.setString(1, txtCPF.getText());
 
-    Model.DadosTemporarios.cpfTutor =
-            txtCPF.getText();
+            try (ResultSet rsCheck = stmtCheck.executeQuery()) {
+
+                if (rsCheck.next()) {
+                    JOptionPane.showMessageDialog(this, "CPF já cadastrado!");
+                    return;
+                }
+            }
+        }
+
+        // 💾 2. INSERIR PET
+        String sqlInsert =
+                "INSERT INTO pet(nome_pet, cpf_tutor, peso, raca, idade) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = conn.prepareStatement(
+                sqlInsert,
+                Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, txtNomePet.getText());
+            stmt.setString(2, txtCPF.getText());
+            stmt.setDouble(3, Double.parseDouble(txtPeso.getText()));
+            stmt.setString(4, txtRaca.getText());
+            stmt.setInt(5, Integer.parseInt(txtIdade.getText()));
+
+            stmt.executeUpdate();
+
+            // 🔑 3. PEGAR ID GERADO
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+
+                if (rs.next()) {
+
+                    int idGerado = rs.getInt(1);
+
+                    Model.DadosCompartilhados.idPet = idGerado;
+                    Model.DadosCompartilhados.txtNomePet = txtNomePet.getText();
+                    Model.DadosCompartilhados.cpfTutor = txtCPF.getText();
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Pet cadastrado com sucesso!\nID: " + idGerado
+                    );
+
+                    Tutor telaTutor = new Tutor();
+                    telaTutor.receberDadosPet();
+                    telaTutor.setVisible(true);
+
+                    dispose();
+                }
+            }
+        }
+    }
+
+} catch (SQLException e) {
 
     JOptionPane.showMessageDialog(
             this,
-            "Pet cadastrado com sucesso!\nID: "
-                    + idGerado
+            "Erro no banco de dados:\n" + e.getMessage()
     );
 
-    Tutor telaTutor = new Tutor();
+} catch (NumberFormatException e) {
 
-    telaTutor.receberDadosPet();
+    JOptionPane.showMessageDialog(
+            this,
+            "Peso ou idade inválidos."
+    );
 
-    telaTutor.setVisible(true);
+} catch (HeadlessException e) {
 
-    dispose();
-     
+    JOptionPane.showMessageDialog(
+            this,
+            "Erro inesperado:\n" + e.getMessage()
+    );
+}
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
@@ -261,6 +326,7 @@ public class Pet extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Pet().setVisible(true);
             }
@@ -284,6 +350,6 @@ public class Pet extends javax.swing.JFrame {
     private javax.swing.JTextField txtIdade;
     private javax.swing.JTextField txtNomePet;
     private javax.swing.JTextField txtPeso;
-    private javax.swing.JTextField txtRaça;
+    private javax.swing.JTextField txtRaca;
     // End of variables declaration//GEN-END:variables
 }

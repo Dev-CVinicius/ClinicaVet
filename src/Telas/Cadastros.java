@@ -4,19 +4,78 @@
  */
 package Telas;
 
+import ConexaoDAO.Conexao;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+
+
 /**
  *
  * @author Vinni
  */
-public class Cadastros extends javax.swing.JFrame {
+public final class Cadastros extends javax.swing.JFrame {
 
     /**
      * Creates new form Cadastros
      */
     public Cadastros() {
         initComponents();
-    }
+TableCadastrosContato.setModel(new javax.swing.table.DefaultTableModel(
+        new Object [][] {},
+        new String [] {
+            "CPF Tutor", "Nome Tutor", "Nome Pet", "Celular", "ID Pet"
+        }
+    ));
 
+    carregarTabela();
+}
+
+
+public void carregarTabela() {
+
+    try {
+
+        DefaultTableModel modelo = new DefaultTableModel(
+            new Object[][] {},
+            new String[] {
+                "CPF Tutor", "Nome Tutor", "Nome Pet", "Celular", "ID Pet"
+            }
+        );
+
+        try (Connection conn = Conexao.conectar()) {
+            String sql =
+                    "SELECT t.cpf, t.nome_tutor, p.nome_pet, t.celular, p.id_pet " +
+                    "FROM tutor t " +
+                    "INNER JOIN pet p ON t.id_pet = p.id_pet";
+            
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                ResultSet rs = stmt.executeQuery();
+                
+                while (rs.next()) {
+                    
+                    modelo.addRow(new Object[] {
+                        rs.getString("cpf"),
+                        rs.getString("nome_tutor"),
+                        rs.getString("nome_pet"),
+                        rs.getString("celular"),
+                        rs.getInt("id_pet")
+                    });
+                }
+                
+                TableCadastrosContato.setModel(modelo);
+                
+                rs.close();
+            }
+        }
+
+    } catch (SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Erro ao carregar cadastros:\n" + e.getMessage()
+        );
+    }
+}
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,12 +87,13 @@ public class Cadastros extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TableCadastrosContato = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TableCadastrosContato.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -41,23 +101,34 @@ public class Cadastros extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "CPF Tutor", "Nome Tutor", "Nome Pet", "Celular"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TableCadastrosContato);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("Cadastros Realizados Pet");
+        jLabel1.setText("Cadastros Realizados ");
+
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(247, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(262, 262, 262)
                 .addComponent(jLabel1)
-                .addGap(278, 278, 278))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVoltar, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -65,7 +136,10 @@ public class Cadastros extends javax.swing.JFrame {
                 .addGap(16, 16, 16)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnVoltar, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -87,6 +161,14 @@ public class Cadastros extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+       
+         Menu menu = new Menu();
+         menu.setVisible(true);
+         dispose();
+        
+    }//GEN-LAST:event_btnVoltarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -124,9 +206,10 @@ public class Cadastros extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TableCadastrosContato;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
